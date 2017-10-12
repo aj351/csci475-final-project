@@ -1,4 +1,4 @@
-\documentclass{IEEEtran}
+\documentclass[12pt]{IEEEtran}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{csquotes}
@@ -18,7 +18,9 @@ Databases}
 \begin{abstract}
 Statistical databases have long been know to be vulnerable to inference attacks.
 One method of mitigating these attacks is Differential Privacy. Our final
-project will implement a working Differential Privacy statistical database.
+project will implement a working Differential Privacy statistical database and
+then perform experiments using the database to analyze how well our
+implementation achieves the objectives of Differential Privacy databases.
 \end{abstract}
 
 % (2) introduction (including the background, motivation, and goal)
@@ -60,12 +62,41 @@ Differential Privacy on their Privacy page~\cite{Apple:2017}. Because of this,
 our team has decided to take the previous research on the topic and attempt to
 implement a Differential Privacy statistical database.
 
+Our team will research the best approach for implementing this, but currently,
+we are considering two approaches:
+\begin{enumerate}
+    \item Taking an existing statistical database and adding a Differential
+        Privacy component; or
+    \item Creating a simple statistical database with a Differential Privacy
+        component built in.
+\end{enumerate}
+
+Initially, we will limit the number of statistical functions that we implement
+to the minimum required to determine whether or not our implementation functions
+as intended. If time allows, we will add more advanced statistical functions to
+our implementation.
+
 % (4) expected results
 \section{Expected Results}
+\label{expected-res}
+After implementing this database, our team will run experiments to determine
+whether or not our implementation achieves the following objectives:
+\begin{enumerate}
+    \item The individual records are reasonably difficult to determine.
+    \item The statistical data returned by the queries from the database are
+        sufficiently accurate.
+\end{enumerate}
+If these two objectives are met, then the project will be considered a success.
 
 % (5) conclusion
 \section{Conclusion}
-
+Statistical databases are useful tools for allowing users to analyze the
+datasets contained within the database while maintaining the privacy of
+individual records. There are challenges with this including the possibility of
+inference attacks but these can be mitigated by using techniques such as
+Differential Privacy. Our team's objective is to create a Differential Privacy
+statistical database and perform experiments to determine if our implementation
+achieves the objectives described in Section~\ref{expected-res}.
 
 % (6) references
 \printbibliography
