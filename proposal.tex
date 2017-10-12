@@ -1,0 +1,73 @@
+\documentclass{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{biblatex}
+
+\addbibresource{references.bib}
+
+\title{Applications and Implementation of Differential Privacy on Statistical
+Databases}
+\author{Jonathan Sumner Evans, Victoria Girkins, and Sam Sartor}
+
+\begin{document}
+
+\maketitle
+
+% (1) an abstract
+\begin{abstract}
+Statistical databases have long been know to be vulnerable to inference attacks.
+One method of mitigating these attacks is Differential Privacy. Our final
+project will implement a working Differential Privacy statistical database.
+\end{abstract}
+
+% (2) introduction (including the background, motivation, and goal)
+\section{Introduction}
+Statistical databases are designed for statistical analysis of the datasets
+contained within the database. One of the desired properties of statistical
+databases is that nothing about an individual should be learnable from the
+database that cannot be learned without access to the
+database~\cite{Dwork:2006:DP}. In other words, gathering information about the
+records underlying the statistics using allowed queries on the database should
+be impossible.
+
+Without any protections, well crafted queries to a statistical database can
+reveal information about a single row. An attack of this form is called an
+\textit{inference attack}. Take, for example, a class of 30 people that stores
+the students' homestate and age.  If it is known from some other source that
+only one of them is from a certain state, determining the age of that person is
+easy and merely requires a calculation of the \texttt{sum} of the ages of people
+with that homestate. In this case, since there is only one person, the sum will
+be equal to that person's age.
+
+One way to alleviate this problem and reduce the risk of a successful inference
+attack is to use a technique known as \textit{Differential Privacy} --- a term
+first coined by Cynthia Dwork at Microsoft Research in
+2006~\cite{Hilton:DP:history}. The goal of Differential Privacy is to maximize
+the statistical accuracy of data while also maximizing the privacy of the
+individual records in the database. It does this by introducing randomness into
+the dataset while still maintaining the statistical accuracy of the queries on
+that dataset. This randomness reduces the likelihood of obtaining information
+about the actual individual records in the database.
+
+% (3) key idea and approach (e.g., survey, testbed, system
+% design/implementation, experiments, etc.)
+\section{Approach}
+Differential Privacy has received adoption in many applications including the
+United States Census Bureau to show commuting
+patterns~\cite{Machanavajjhala:2008}. Apple also advertises its use of
+Differential Privacy on their Privacy page~\cite{Apple:2017}. Because of this,
+our team has decided to take the previous research on the topic and attempt to
+implement a Differential Privacy statistical database.
+
+% (4) expected results
+\section{Expected Results}
+
+% (5) conclusion
+\section{Conclusion}
+
+
+% (6) references
+\printbibliography
+
+\end{document}
