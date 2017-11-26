@@ -1,0 +1,17 @@
+- "the risk to one’s privacy should not substantially (as bounded by ε) increase as a result of participating in a statistical database."
+- need to add noise to results of queries; various mechanisms available
+- identifying a unique row violates privacy
+- "The Laplace mechanism involves adding random noise that conforms to the Laplace statistical distribution. That’s it"
+- We are not guaranteed unlimited privacy, but rather a "privacy budget." Limit number of queries so users cannot be compromised.
+- Sensitivity of a database = maximum difference between two queries on databases that differ by only one row
+- Privacy parameter - related directly to accuracy of queries and inversely to privacy
+
+MY PROPOSAL:
+Create a database with several pieces of information that could be exploited, like the "Mr. Smith moves out" scenario in
+the one article. Add noise according to at least two different mechanisms. Make malicious queries and observe:
+
+- Privacy gain from adding the noise
+- Any differences between results from the two mechanisms
+- Need for a limit on number of queries
+- Whether DP is better at preventing some tracker attacks than others
+- etc
