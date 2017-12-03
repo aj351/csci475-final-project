@@ -3,6 +3,7 @@
 \usepackage[english]{babel}
 \usepackage{csquotes}
 \usepackage{biblatex}
+\usepackage{amsmath}
 
 \addbibresource{../references.bib}
 
@@ -16,13 +17,25 @@ Databases}
 
 % (1) an abstract
 \begin{abstract}
-    % ABSTRACT
+    Statistical databases have long been know to be vulnerable to inference
+    attacks. One method of mitigating these attacks is Differential Privacy. For
+    our final project we implemented a simple Differential Privacy statistical
+    database and then performed experiments using the database to analyze how
+    well our implementation achieves the objectives of Differential Privacy
+    databases.
 \end{abstract}
 
 % (2) introduction (including the background, motivation, and goal)
 \section{Introduction}
+\subsection{Previous Attempts at Anonymizing Statistical Data}
+Many attempts have been made to privatize data in the past and many are still in
+use today. However everything from simply removing columns containing personally
+identifiable information to advanced techniques such as as k-anonymity and
+l-diversity have been shown to be vulnerable to attack~\cite{Atockar:2014}.
+K-anonymity, for example, does not include any randomization, attackers can
+still make inferences about data sets~\cite{Aggarwal:2005}.
 
-\subsection{Differential Privacy Methods}
+\subsection{Differential Privacy}
 
 % (3) key idea and approach (e.g., survey, testbed, system
 % design/implementation, experiments, etc.)
