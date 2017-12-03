@@ -1,0 +1,57 @@
+One of the defining scenarios in differential privacy is the case of two databases which differ by only one row. Differences between queries to these two databases
+could reveal key information about the differing row if differential privacy is not implemented. For example, consider the following pseudoquery:
+
+Select sum(income) from table 
+
+and then this one:
+
+Select sum(income) from table where ZIP != 80127
+
+Clearly, if only one entry in the database is associated with a ZIP code of 80127, the results of this query can be used to find this person's income. A similar
+scenario occurs if the first query is ran twice, once before and once after a new entry is added to the database. A goal of differential privacy is to minimize
+the private information (in this case, income) leaked by such targeted queries. For the rest of this discussion, we will assume for simplicity's sake that the
+first query given above is the only possible query that can be run on the database. We also assume income is sensitive information.
+
+One common definition of differential privacy is "epsilon-differentially private." A database falls under this category if it is private as bounded by a chosen
+value epsilon. As opposed to the mathematical definition, here we give a more intuitive definition as stated by Atockar:
+"This [epsilon-differentially private] can be translated as meaning that the risk to one's privacy should not substantially (as bounded by epsilon) increase as a 
+result of participating in a statistical database." 
+
+For the sake of being rigorous, the mathematical definition of epsilon-differential privacy follows.
+log(P(K(D) element of S) <= exp(epsilon) * P(K(D') element of S))
+For now, all that concerns us about this equation is that D and D' are the above-mentioned databases differing by a single row, and K() is our mechanism for adding noise.
+
+One way of accomplishing epsilon-differential privacy is by adding noise according to the Laplace distribution (this is our K()). Before we get too far into the
+mathematics, let us look at our inputs and our goals:
+
+Inputs: A statistical database with sensitive information, an attacker poised with a malicious query, and a desired epsilon, or privacy parameter.
+Goals: To add enough Laplace-distributed noise to the results of database queries that our database is mathematically considered differentially private.
+
+We can add noise according to the zero-centered Laplace distribution, which is convenient in that it has only one parameter, its "scale." In choosing this parameter,
+it makes sense that we should consider epsilon. Another factor comes into play, however: the "sensitivity" of the database. This is defined as the maximum difference 
+between the results of any query run on two databases which differ by only one row, as described above. Since we are assuming
+
+Select sum(income) from table 
+
+is the only query that this database will accept, the "sensitivity" of our database is clearly the highest income in the table, since this value will be
+the difference between two queries run on the database before and after the record associated with this income is added.
+
+So, we must add noise while considering both epsilon and the database's above-defined sensitivity. In fact, in a paper by Cynthia Dwork, it was proven that choosing 
+the "scale" parameter of our Laplace distribution to equal
+delta(f)/epsilon
+where delta(f) is sensitivity, our database will mathematically satisfy epsilon-differential privacy. That is, we should add noise to the data drawn from a 0-centered Laplace
+distribution with scale parameter delta(f)/epsilon.
+
+The one further cosideration we must make is the possibility of multiple queries to the database. The Laplace distribution is symmetrical, so if unlimited queries were allowed,
+the attacker could simply run his query many times and take the average to extract sensitive data. So we must limit the number of queries allowed, and fortunately
+the calculation is linear. Assume we draw all noise from the same distribution (it would be possible to vary it but this unecessarily complicates things), and that
+this distribution is Laplace, 0-centered, with a privacy parameter epsilon_i (that is, with scale parameter delta(f)/epsilon_i). If we limit learners to k queries, our overall 
+privacy budget is k*epsilon_i. This privacy budget is our actual epsilon; as stated by Atockar, "it reflects the maximum privacy release allowable for the total query session."
+
+So to sum it up practically: if we wish to make our database epsilon-differentially private as bounded by some value epsilon, our database has sensitivity delta(f), and we wish 
+for learners to be allowed k queries before being locked out, we should add a random variable to each query, drawn from the 0-centered Laplace distribution with scale 
+parameter 
+k*delta(f)/epsilon
+And that's it.
+
+</Math>
