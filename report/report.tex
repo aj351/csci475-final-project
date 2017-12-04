@@ -18,6 +18,9 @@
 \MakeOuterQuote{"}
 \setminted{autogobble,python3,mathescape,frame=lines,framesep=2mm,fontsize=\footnotesize}
 
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+
 \newtheorem{definition}{Definition}
 
 \title{Applications and Implementation of Differential Privacy on Statistical
@@ -183,11 +186,32 @@ Mathematically, the Laplace Distribution is defined as follows:
         \end{equation}
         where $\mu$ is the location of the center of the distribution and $b$ is
         the scale parameter.
+
+        Figure~\ref{fig:laplace-pdf} is a visualization of the p.d.f. for a few
+        values of $\mu$ and $b$.\\
+
+        \begin{figure}[H]
+            \begin{tikzpicture}
+                \begin{axis}[axis lines = left]
+                    \addplot [domain=-10:10, samples=200, color=red, very thick]
+                    {(1 / 2) * exp(-abs(x))};
+                    \addlegendentry{$\mu=0$, $b=1$}
+                    \addplot [domain=-10:10, samples=200, color=blue, very thick]
+                    {(1 / (2 * 2)) * exp(-abs(x) / 2)};
+                    \addlegendentry{$\mu=0$, $b=2$}
+                    \addplot [domain=-10:10, samples=200, color=green, very thick]
+                    {(1 / (2 * 2)) * exp(-abs(x - 2) / 2)};
+                    \addlegendentry{$\mu=2$, $b=2$}
+                \end{axis}
+            \end{tikzpicture}
+            \caption{Probability Density Function for the Laplace Distribution}
+            \label{fig:laplace-pdf}
+        \end{figure}
     \end{definition}
 \end{mdframed}
 
 For us, $\mu$ is 0 so we can use a variant of the Laplace Distribution called
-the zero-centered Laplace Distribution which has only one parameter, $b$, the
+the Zero-Centered Laplace Distribution which has only one parameter, $b$, the
 scale.
 
 \subsubsection{Using the Laplace Differential Privacy Mechanism}\label{sec:using-laplace-dp}
