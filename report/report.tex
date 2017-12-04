@@ -1,4 +1,5 @@
-\documentclass[12pt]{IEEEtran}
+\documentclass[conference,11pt]{IEEEtran}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{csquotes}
@@ -9,7 +10,22 @@
 
 \title{Applications and Implementation of Differential Privacy on Statistical
 Databases}
-\author{Jonathan Sumner Evans, Victoria Girkins, and Sam Sartor}
+\author{
+    \IEEEauthorblockN{
+        Jonathan Sumner Evans\IEEEauthorrefmark{1},
+        Victoria Girkins\IEEEauthorrefmark{2} and
+        Sam Sartor\IEEEauthorrefmark{3}
+    }
+    \IEEEauthorblockA{
+        Department of Computer Science,
+        Colorado School of Mines\\
+        Golden, Colorado\\
+        Email:
+            \IEEEauthorrefmark{1}jonathanevans@mines.edu,
+            \IEEEauthorrefmark{1}vgirkins@mines.edu,
+            \IEEEauthorrefmark{2}rdmerillat@mines.edu,
+    }
+}
 
 \begin{document}
 
@@ -17,12 +33,11 @@ Databases}
 
 % (1) an abstract
 \begin{abstract}
-    Statistical databases have long been know to be vulnerable to inference
-    attacks. One method of mitigating these attacks is Differential Privacy. For
-    our final project we implemented a simple Differential Privacy statistical
-    database and then performed experiments using the database to analyze how
-    well our implementation achieves the objectives of Differential Privacy
-    databases.
+Statistical databases have long been know to be vulnerable to inference attacks.
+One method of mitigating these attacks is Differential Privacy. For our final
+project we implemented a simple Differential Privacy statistical database and
+then performed experiments using the database to analyze how well our
+implementation achieves the objectives of Differential Privacy databases.
 \end{abstract}
 
 % (2) introduction (including the background, motivation, and goal)
