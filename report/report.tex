@@ -211,7 +211,7 @@ Mathematically, the Laplace Distribution is defined as follows:
 \end{mdframed}
 
 For us, $\mu$ is 0 so we can use a variant of the Laplace Distribution called
-the zero-centered Laplace Distribution which has only one parameter, $b$, the
+the Zero-Centered Laplace Distribution which has only one parameter, $b$, the
 scale.
 
 \subsubsection{Using the Laplace Differential Privacy Mechanism}\label{sec:using-laplace-dp}
@@ -231,9 +231,9 @@ the difference between two queries run on the database before and after the
 record associated with this income is added.
 
 So, we must add noise while considering both {\textepsilon} and the database's
-above-defined sensitivity. In fact, in a paper by Dwork~\cite{Dwork:2011}, it
-was proven that choosing the "scale" parameter ($b$) of our Laplace distribution
-according to this equation
+above-defined sensitivity. In fact, in a paper by
+Dwork~\cite{Dwork:2011:private-data-analysis}, it was proven that choosing the
+"scale" parameter ($b$) of our Laplace distribution according to this equation
 \begin{equation}
     b = {\Delta}f/\varepsilon
 \end{equation}
@@ -273,10 +273,8 @@ when choosing where to draw this line.
 
 % (3) key idea and approach (e.g., survey, testbed, system
 % design/implementation, experiments, etc.)
-\section{Approach}
-
 % (4) activities (such as literature study and experiments) that you performed
-\section{Experiment}
+\section{Approach and Experiment}
 \subsection{Dataset}
 \subsection{Crafted Queries}
 \subsection{Database Implementation}
