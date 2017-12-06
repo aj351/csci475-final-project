@@ -48,12 +48,15 @@ Databases}
 
 % (1) an abstract
 \begin{abstract}
-Statistical databases have long been know to be vulnerable to inference attacks.
-We describe the nature of inference attacks and one method of mitigating these
-attacks called Differential Privacy. We describe our implementation of a simple
-Differential Privacy statistical database and then performed experiments using
-the database to analyze how well our implementation achieves the objectives of
-Differential Privacy databases.
+    Statistical databases have long been know to be vulnerable to inference
+    attacks.  We describe the nature of inference attacks and analyze one method
+    of mitigating these attacks called Differential Privacy. We discuss two
+    mechanisms for differential privacy. We then explain our implementation of a
+    simple Differential Privacy statistical database and the experiments we
+    performed on the database. We then analyze how well our implementation
+    achieves the objectives of Differential Privacy databases. We conclude by
+    calling on industry to create differential privacy implementations that can
+    be used in general applications.
 \end{abstract}
 
 % (2) introduction (including the background, motivation, and goal)
@@ -175,6 +178,9 @@ goals:
         considered differentially private.
 \end{itemize}
 
+% make Definition of Laplace Distribution not break across columns
+{\vfill\eject}
+
 Mathematically, the Laplace Distribution is defined as follows:
 \begin{mdframed}
     \begin{definition}
@@ -187,7 +193,7 @@ Mathematically, the Laplace Distribution is defined as follows:
         where $\mu$ is the location of the center of the distribution and $b$ is
         the scale parameter.
 
-        Figure~\ref{fig:laplace-pdf} is a visualization of the p.d.f. for a few
+        Figure~\ref{fig:laplace-pdf} is a visualization of the p.d.f.\ for a few
         values of $\mu$ and $b$.\\
 
         \begin{figure}[H]
@@ -271,22 +277,84 @@ in information security, this is a balancing act between security and usability,
 and we should consider the nature of the database, its contents, and its purpose
 when choosing where to draw this line.
 
+\begin{center}***\end{center}
+
+For our final project, we implemented and analyzed a differential privacy
+database which can perform a limited set of aggregate functions on a dataset. We
+created a sample dataset to help us test our database and we describe it in
+Section~\ref{sec:dataset}. The queries that we used to test our database are
+detailed in Section~\ref{sec:crafted-queries} and the actual implementation of
+the database is outlined in Section~\ref{sec:db-impl}. The results of our
+experiment are summarized in Section~\ref{sec:results} and we discuss some of
+the limitations of our implementation in Section~\ref{sec:limitations}. In
+Section~\ref{sec:future-work} we describe some of the potential future work in
+the field of differential privacy. We conclude in Section~\ref{sec:conclusion}
+and call on industry to create effective, easy-to-use differential privacy
+implementations for use in general industry applications.
+
 % (3) key idea and approach (e.g., survey, testbed, system
 % design/implementation, experiments, etc.)
 % (4) activities (such as literature study and experiments) that you performed
 \section{Approach and Experiment}
-\subsection{Dataset}
-\subsection{Crafted Queries}
-\subsection{Database Implementation}
+\subsection{Dataset}\label{sec:dataset}
+\subsection{Crafted Queries}\label{sec:crafted-queries}
+\subsection{Database Implementation}\label{sec:db-impl}
 
 % (5) description and analysis of the key results and observations
-\section{Results}
+\section{Results}\label{sec:results}
 
 % (6) discussion of the limitations and potential future work
-\section{Limitations and Future Work}
+\section{Limitations}\label{sec:limitations}
+% drawbacks: limited functionality, limited to laplace dist. -> only can have
+% numerical data, not categorical data
+Our differential privacy implementation is very limited. Some of the limitations
+are listed below.
+\begin{itemize}
+    \item Our implementation does not parse actual SQL queries. However, we
+        have designed our program in a way that makes it easy to add a parsing
+        engine on top of our program.
+    \item Our implementation only works on a small set of aggregate functions.
+        Future iterations of this project could implement more of these
+        functions.
+    \item Our implementation supports a very limited set of SQL operations. For
+        example, it does not support \texttt{join} statements.  Future
+        iterations of this project could implement more of the SQL standard.
+    \item Our implementation can only process numerical data and is limited to
+        the Laplace Mechanism. Adding alternative differential privacy mechanism
+        such as the Exponential Mechanism would greatly improve the practicality
+        of our differential privacy implementation.
+    \item Our implementation is not heavily optimized. Currently, each query has
+        $\mathcal{O}(n^2)$ algorithmic complexity. In further iterations of our
+        implementation, we could optimize the performance of our system using
+        caching methods and by optimizing the algorithms we are using.
+\end{itemize}
+
+Although our differential privacy implementation is limited, it was very
+effective for our experiment.
+% TODO: add more here?
+
+\section{Future Work}\label{sec:future-work}
+% future work: differential privacy is not very widespread, use it in more
+% applications and make it more accessible (more libraries that real people
+% could use)
+Differential Privacy is a relatively new method of protecting data in a
+statistical database. As such, there are not many implementations of it outside
+of academia and large companies like Microsoft and Apple. If differential
+privacy was adopted by a larger percentage of the industry, more statistical
+databases with sensitive information would be resistant to inference attacks.
+
+Software engineers have a great opportunity to create implementations of
+differential privacy suitable for use in general industry applications. Such an
+implementation could be a library which other programmers could include in their
+project using dependency managers such as \texttt{pip}, \texttt{npm}, or
+\texttt{cargo}. The creation of these general-purpose libraries could help make
+differential privacy more accessible and cost effective for industry
+professionals. This would help increase adoption of differential privacy and
+result in an overall improvement of user's privacy in the industry.
 
 % (7) conclusion
-\section{Conclusion}
+\section{Conclusion}\label{sec:conclusion}
+% call on industry to make DP libraries
 
 % (8) references
 {\printbibliography}
