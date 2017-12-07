@@ -282,4 +282,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.gitignore.io/api/latex,linux,windows,vim,visualstudiocode
+**/__pycache__/
