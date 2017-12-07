@@ -11,7 +11,7 @@
 \usepackage{minted}
 \usepackage{tipa}
 \usepackage{mdframed}
-\usepackage{enumitem}
+\usepackage[inline]{enumitem}
 
 \addbibresource{../references.bib}
 
@@ -181,6 +181,23 @@ goals:
 % make Definition of Laplace Distribution not break across columns
 {\vfill\eject}
 
+% Have to include this table here so it shows up on the next page
+\begin{table*}[h]
+    \caption{Columns in Our Sample Dataset}
+    \label{tab:cols}
+    \centering
+    \begin{tabular}{l | l | l}
+        \textbf{Field} & \textbf{Column Name} & \textbf{Method of Generation} \\
+        \hline
+        Name & \texttt{name} & the \texttt{names} Python library \\
+        Age & \texttt{age} & uniformly distributed between 18 and 65 \\
+        Income & \texttt{income} & distributed log-normal \\
+        Zip Code & \texttt{zip} & from a random set of \textasciitilde40
+            five-digit numbers \\
+        Net-worth & \texttt{net\_worth} & from age, income, and a random offset
+    \end{tabular}
+\end{table*}
+
 Mathematically, the Laplace Distribution is defined as follows:
 \begin{mdframed}
     \begin{definition}
@@ -280,33 +297,57 @@ when choosing where to draw this line.
 \begin{center}***\end{center}
 
 For our final project, we implemented and analyzed a differential privacy
-database which can perform a limited set of aggregate functions on a dataset. We
-created a sample dataset to help us test our database and we describe it in
-Section~\ref{sec:dataset}. The queries that we used to test our database are
-detailed in Section~\ref{sec:crafted-queries} and the actual implementation of
-the database is outlined in Section~\ref{sec:db-impl}. The results of our
-experiment are summarized in Section~\ref{sec:results} and we discuss some of
-the limitations of our implementation in Section~\ref{sec:limitations}. In
-Section~\ref{sec:future-work} we describe some of the potential future work in
-the field of differential privacy. We conclude in Section~\ref{sec:conclusion}
-and call on industry to create effective, easy-to-use differential privacy
-implementations for use in general industry applications.
+database which can perform a limited set of aggregate functions on a dataset.
+We describe our approach and experiment in Section~\ref{sec:approach}. The
+results of our experiment are summarized in Section~\ref{sec:results} and we
+discuss some of the limitations of our implementation in
+Section~\ref{sec:limitations}. In Section~\ref{sec:future-work} we describe some
+of the potential future work in the field of differential privacy. We conclude
+in Section~\ref{sec:conclusion} and call on industry to create effective,
+easy-to-use differential privacy implementations for inclusion in general
+industry applications.
 
 % (3) key idea and approach (e.g., survey, testbed, system
 % design/implementation, experiments, etc.)
 % (4) activities (such as literature study and experiments) that you performed
-\section{Approach and Experiment}
+\section{Approach and Experiment}\label{sec:approach}
+To perform our experiment, we generated a large sample dataset suitable for
+statistical queries (Section~\ref{sec:dataset}). Then we built a simple
+Differential Privacy database as detailed in Section~\ref{sec:db-impl} and
+crafted a set of queries with which to attack our database as described in
+Section~\ref{sec:crafted-queries}.
+% TODO: more here?
+
 \subsection{Dataset}\label{sec:dataset}
-\subsection{Crafted Queries}\label{sec:crafted-queries}
+To test our database, we created a dataset with 10,000 data points (rows). The
+columns for each row are listed in Table~\ref{tab:cols}.
+
+We chose the generation methods to roughly model the distributions of names,
+age, income, zip code, and net worth of the US population. For example, the
+income is distributed log-normal which approximates the distribution of incomes
+in the United States.
+% TODO: more here
+
 \subsection{Database Implementation}\label{sec:db-impl}
+% TODO: reads CSV
+% TODO: implemented sum, count, min, max, mean, variance, sd
+% TODO:         How to compute statistic (e.g. mean = total / count)
+% TODO          How to find Δf (e.g. from most extreme value) 
+% TODO: Filters rows with user-specified where clause (python expression)
+% TODO: Handles edge cases where 1 or 0 rows are returned
+% TODO: Adds laplace noise dependent on Δf, and a given ε / query limit
+% TODO: Displays the privatized result
+% TODO: more here
+
+\subsection{Crafted Queries}\label{sec:crafted-queries}
+% TODO: more here
 
 % (5) description and analysis of the key results and observations
 \section{Results}\label{sec:results}
+% TODO: more here
 
 % (6) discussion of the limitations and potential future work
 \section{Limitations}\label{sec:limitations}
-% drawbacks: limited functionality, limited to laplace dist. -> only can have
-% numerical data, not categorical data
 Our differential privacy implementation is very limited. Some of the limitations
 are listed below.
 \begin{itemize}
@@ -348,6 +389,7 @@ project using dependency managers such as \texttt{pip}, \texttt{npm}, or
 differential privacy more accessible and cost effective for industry
 professionals. This would help increase adoption of differential privacy and
 result in an overall improvement of user's privacy in the industry.
+% TODO: more here?
 
 % (7) conclusion
 \section{Conclusion}\label{sec:conclusion}
@@ -356,6 +398,7 @@ result in an overall improvement of user's privacy in the industry.
 % Limitations of our work
 % Limitations of DP
 % call on industry to make DP libraries
+% TODO: more here?
 
 % (8) references
 {\printbibliography}
