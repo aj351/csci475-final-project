@@ -188,7 +188,7 @@ goals:
     \caption{Columns in Our Sample Dataset}\label{tab:cols}
     \centering
     \begin{tabular}{l | l | l}
-        \textbf{Field} & \textbf{Column Name} & \textbf{Method of Generation} \\
+        \textbf{Field} & \textbf{Column Name} & \textbf{Generation Method} \\
         \hline
         Name & \texttt{name} & the \texttt{names} Python library \\
         Age & \texttt{age} & uniformly distributed between 18 and 65 \\
@@ -202,7 +202,7 @@ goals:
 Mathematically, the Laplace Distribution is defined as follows:
 \begin{mdframed}
     \begin{definition}\label{def:laplace}
-        The Laplace Distribution, $\text{Lap}(\mu, b)$, also known as a
+        The \textbf{Laplace Distribution}, $\text{Lap}(\mu, b)$, also known as a
         symmetric exponential distribution, is the probability distribution with
         p.d.f.:
         \begin{equation}
@@ -250,7 +250,7 @@ the random variate for the Laplace Distribution which is defined as follows:
                     b \log(|u|) & \text{if }u \leq 0
             \end{matrix}\right.
         \end{equation}
-        where $u$ is uniformly distributed in the range $(0, 1)$.
+        where $u$ is uniformly distributed in the range $(-1, 1)$.
     \end{definition}
 \end{mdframed}
 
@@ -387,7 +387,6 @@ Once the statistic and $\Delta f$ are calculated, noise is added according to
 the Laplace Distribution as described in Section~\ref{sec:using-laplace-dp}.
 This privatized result is then displayed. For testing purposes, we also output
 the actual statistic, but this can easily be removed in future implementations.
-% TODO: more here?
 
 \subsection{Crafted Queries}\label{sec:crafted-queries}
 % TODO: more here
