@@ -395,6 +395,47 @@ the actual statistic, but this can easily be removed in future implementations.
 \section{Results}\label{sec:results}
 % TODO: more here
 
+With Differential Privacy disabled.
+\begin{minted}{html}
+    use dp (y/n): n
+    database csv: bigdata.csv
+    =================
+    summarize field: age
+    summary function: sum
+    where: zip == 31643
+    10412
+    =================
+    summarize field: age
+    summary function: sum
+    where: zip == 31643 and name != "Abel Woods"
+    10379
+\end{minted}
+From these queries, we can determine the total age of the people in ZIP code
+31643 is 10412. However, we can also infer that Abel Woods is $10412 - 10379 =
+33$ years old. This is a violation of privacy.
+
+With Differential Privacy enabled.
+\begin{minted}{html}
+    use dp (y/n): y
+    epsilon: 5
+    query limit: 2
+    database csv: bigdata.csv
+    =================
+    summarize field: age
+    summary function: sum
+    where: zip == 31643
+    10409
+    =================
+    summarize field: age
+    summary function: sum
+    where: zip == 31643 and name != "Abel Woods"
+    10435
+\end{minted}
+From these queries, we can determine that the total age of the people in ZIP
+code 31643 is 10409, a 0.2\% error. If we attempt to use these queries to find
+the age of, Abel Woods, we will get $10409 - 10445 = 49$, a 48\% error. In this
+way, Abel Woods' privacy is protected.
+
 % (6) discussion of the limitations and potential future work
 \section{Limitations}\label{sec:limitations}
 Our differential privacy implementation is very limited. Some of the limitations
