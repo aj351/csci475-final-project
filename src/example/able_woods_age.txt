@@ -1,0 +1,10 @@
+y
+10
+2
+bigdata.csv
+age
+sum
+zip == 31643
+age
+sum
+zip == 31643 and name != "Abe Woods"
