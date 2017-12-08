@@ -43,21 +43,25 @@ Databases}
 }
 
 \begin{document}
-
-\maketitle
-
 % (1) an abstract
-\begin{abstract}
-    Statistical databases have long been know to be vulnerable to inference
-    attacks.  We describe the nature of inference attacks and analyze one method
-    of mitigating these attacks called Differential Privacy. We discuss two
-    mechanisms for differential privacy. We then explain our implementation of a
-    simple Differential Privacy statistical database and the experiments we
-    performed on the database. We then analyze how well our implementation
-    achieves the objectives of Differential Privacy databases. We conclude by
-    calling on industry to create differential privacy implementations that can
-    be used in general applications.
-\end{abstract}
+\twocolumn[
+    \begin{@twocolumnfalse}
+    \maketitle
+    \end{@twocolumnfalse}
+    \begin{abstract}
+        Statistical databases have long been know to be vulnerable to inference
+        attacks.  We describe the nature of inference attacks and analyze one
+        method of mitigating these attacks called Differential Privacy. We
+        discuss two mechanisms for differential privacy. We then explain our
+        implementation of a simple Differential Privacy statistical database and
+        the experiments we performed on the database. We then analyze how well
+        our implementation achieves the objectives of Differential Privacy
+        databases. We conclude by calling on industry to create differential
+        privacy implementations that can be used in general applications.
+    \end{abstract}
+    \bigskip
+    \bigskip
+]
 
 % (2) introduction (including the background, motivation, and goal)
 \section{Introduction}
@@ -88,6 +92,7 @@ record will be added to the database, and of timing his queries accordingly. He
 may, however, achieve the same results by narrowing down his query with
 conditionals.
 
+The query
 \begin{minted}{sql}
     SELECT SUM(income)
       FROM table
@@ -178,13 +183,9 @@ goals:
         considered differentially private.
 \end{itemize}
 
-% make Definition of Laplace Distribution not break across columns
-{\vfill\eject}
-
 % Have to include this table here so it shows up on the next page
 \begin{table*}[h]
-    \caption{Columns in Our Sample Dataset}
-    \label{tab:cols}
+    \caption{Columns in Our Sample Dataset}\label{tab:cols}
     \centering
     \begin{tabular}{l | l | l}
         \textbf{Field} & \textbf{Column Name} & \textbf{Method of Generation} \\
@@ -200,7 +201,7 @@ goals:
 
 Mathematically, the Laplace Distribution is defined as follows:
 \begin{mdframed}
-    \begin{definition}
+    \begin{definition}\label{def:laplace}
         The Laplace Distribution, $\text{Lap}(\mu, b)$, also known as a
         symmetric exponential distribution, is the probability distribution with
         p.d.f.:
@@ -236,6 +237,22 @@ Mathematically, the Laplace Distribution is defined as follows:
 For us, $\mu$ is 0 so we can use a variant of the Laplace Distribution called
 the Zero-Centered Laplace Distribution which has only one parameter, $b$, the
 scale.
+
+To draw a value from the Zero-Centered Laplace Distribution efficiently, we use
+the random variate for the Laplace Distribution which is defined as follows:
+\begin{mdframed}
+    \begin{definition}\label{def:laplace-variate}
+        The \textbf{Laplace Random Variate} is
+        \begin{equation}
+            X = \left\{\begin{matrix}
+                    -b \log(|u|) & \text{if }u > 0
+                    \\[8pt]
+                    b \log(|u|) & \text{if }u \leq 0
+            \end{matrix}\right.
+        \end{equation}
+        where $u$ is uniformly distributed in the range $(0, 1)$.
+    \end{definition}
+\end{mdframed}
 
 \subsubsection{Using the Laplace Differential Privacy Mechanism}\label{sec:using-laplace-dp}
 In choosing the value for $b$, it makes sense that we should consider
@@ -316,28 +333,61 @@ statistical queries (Section~\ref{sec:dataset}). Then we built a simple
 Differential Privacy database as detailed in Section~\ref{sec:db-impl} and
 crafted a set of queries with which to attack our database as described in
 Section~\ref{sec:crafted-queries}.
-% TODO: more here?
 
 \subsection{Dataset}\label{sec:dataset}
 To test our database, we created a dataset with 10,000 data points (rows). The
-columns for each row are listed in Table~\ref{tab:cols}.
+columns for each row are listed in Table~\ref{tab:cols}.  The dataset was
+generated using a \texttt{python3} program and is output to a comma separated
+value (CSV) file. We chose to use a CSV file for simplicity, however future
+iterations of our project could use a more sophisticated data store.
 
 We chose the generation methods to roughly model the distributions of names,
 age, income, zip code, and net worth of the US population. For example, the
 income is distributed log-normal which approximates the distribution of incomes
 in the United States.
-% TODO: more here
 
 \subsection{Database Implementation}\label{sec:db-impl}
-% TODO: reads CSV
-% TODO: implemented sum, count, min, max, mean, variance, sd
-% TODO:         How to compute statistic (e.g. mean = total / count)
-% TODO          How to find Δf (e.g. from most extreme value) 
-% TODO: Filters rows with user-specified where clause (python expression)
+% reads CSV
+Our actual database implementation was written in Python to speed up development
+time. If we were implementing this in an application that needed high
+performance, we would use a compiled language such as C or Rust.  To help us
+test our implementation, our database allows the user to enable and disable
+Differential Privacy. When Differential Privacy is enabled, the user is also
+able to configure {\textepsilon} and query limit.
+
+The database reads the data from a CSV file which is specified by the user and
+then allows the following aggregate, or summary, functions on the data:
+\begin{itemize}
+    \item \textbf{\texttt{SUM}}: the numerical sum of the values in a column
+    \item \textbf{\texttt{COUNT}}: the number of rows
+    \item \textbf{\texttt{MIN}}: the minimum numerical value in the column
+    \item \textbf{\texttt{MAX}}: the maximum numerical value in the column
+    \item \textbf{\texttt{MEAN}}: the average value in the column
+    \item \textbf{\texttt{VARIANCE}}: the statistical variance of the column
+    \item \textbf{\texttt{SD}}: the standard deviation of the column
+\end{itemize}
+
+% How to compute statistic (e.g. mean = total / count)
+Calculating these statistics is merely a set of trivial mathematical equations.
+Finding $\Delta f$, however is non-trivial. For each summary statistic, we must
+determine the value that will affect the statistic the most. To do this we
+% TODO: describe how to find Δf for each of the statistics.
+
+% Where clause
+Our database implementation allows the user to specify a \texttt{WHERE} clause.
+Currently, we implement this as a directly evaluated Python expression which is
+executed via the \texttt{eval} function in Python. This is a code injection
+vulnerability, but our goal is to study Differential Privacy, not code injection
+prevention. Future iterations of our project could wrap this functionality and
+prevent code injection attacks.
+
 % TODO: Handles edge cases where 1 or 0 rows are returned
-% TODO: Adds laplace noise dependent on Δf, and a given ε / query limit
-% TODO: Displays the privatized result
-% TODO: more here
+
+Once the statistic and $\Delta f$ are calculated, noise is added according to
+the Laplace Distribution as described in Section~\ref{sec:using-laplace-dp}.
+This privatized result is then displayed. For testing purposes, we also output
+the actual statistic, but this can easily be removed in future implementations.
+% TODO: more here?
 
 \subsection{Crafted Queries}\label{sec:crafted-queries}
 % TODO: more here
