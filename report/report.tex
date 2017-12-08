@@ -244,10 +244,10 @@ the random variate for the Laplace Distribution which is defined as follows:
     \begin{definition}\label{def:laplace-variate}
         The \textbf{Laplace Random Variate} is
         \begin{equation}
-            X = \left\{\begin{matrix}
-                    -b \log(|u|) & \text{if }u > 0
+            X(u) = \left\{\begin{matrix}
+                    -b \log|u| & \text{if }u > 0
                     \\[8pt]
-                    b \log(|u|) & \text{if }u \leq 0
+                    b \log|u| & \text{if }u \leq 0
             \end{matrix}\right.
         \end{equation}
         where $u$ is uniformly distributed in the range $(-1, 1)$.
@@ -485,9 +485,9 @@ result in an overall improvement of user's privacy in the industry.
 \section{Conclusion}\label{sec:conclusion}
 % What we expected
 % What we got
-% Limitations of our work
 % Limitations of DP
-% call on industry to make DP libraries
+% call on industry to make DP libraries (because that's what some of the other
+% papers did and we want to sound as pretentious as possible)
 % TODO: more here?
 
 % (8) references
