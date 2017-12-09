@@ -23,8 +23,10 @@
 
 \newtheorem{definition}{Definition}
 
-\title{Applications and Implementation of Differential Privacy on Statistical
-Databases}
+\title{%
+    Applications and Implementation of Differential Privacy on Statistical
+    Databases
+}
 \author{%
     \IEEEauthorblockN{%
         Jonathan Sumner Evans\IEEEauthorrefmark{1},
@@ -52,7 +54,7 @@ Databases}
         Statistical databases have long been know to be vulnerable to inference
         attacks.  We describe the nature of inference attacks and analyze one
         method of mitigating these attacks called Differential Privacy. We
-        discuss two mechanisms for differential privacy. We then explain our
+        discuss two mechanisms for Differential Privacy. We then explain our
         implementation of a simple Differential Privacy statistical database and
         the experiments we performed on the database. We then analyze how well
         our implementation achieves the objectives of Differential Privacy
@@ -313,15 +315,15 @@ when choosing where to draw this line.
 
 \begin{center}***\end{center}
 
-For our final project, we implemented and analyzed a differential privacy
+For our final project, we implemented and analyzed a Differential Privacy
 database which can perform a limited set of aggregate functions on a dataset.
 We describe our approach and experiment in Section~\ref{sec:approach}. The
 results of our experiment are summarized in Section~\ref{sec:results} and we
 discuss some of the limitations of our implementation in
 Section~\ref{sec:limitations}. In Section~\ref{sec:future-work} we describe some
-of the potential future work in the field of differential privacy. We conclude
+of the potential future work in the field of Differential Privacy. We conclude
 in Section~\ref{sec:conclusion} and call on industry to create effective,
-easy-to-use differential privacy implementations for inclusion in general
+easy-to-use Differential Privacy implementations for inclusion in general
 industry applications.
 
 % (3) key idea and approach (e.g., survey, testbed, system
@@ -337,9 +339,9 @@ Section~\ref{sec:crafted-queries}.
 \subsection{Dataset}\label{sec:dataset}
 To test our database, we created a dataset with 10,000 data points (rows). The
 columns for each row are listed in Table~\ref{tab:cols}.  The dataset was
-generated using a \texttt{python3} program and is output to a comma separated
-value (CSV) file. We chose to use a CSV file for simplicity, however future
-iterations of our project could use a more sophisticated data store.
+generated using a Python program and is output to a comma separated value (CSV)
+file. We chose to use a CSV file for simplicity, however future iterations of
+our project could use a more sophisticated data store.
 
 We chose the generation methods to roughly model the distributions of names,
 age, income, zip code, and net worth of the US population. For example, the
@@ -353,7 +355,7 @@ time. If we were implementing this in an application that needed high
 performance, we would use a compiled language such as C or Rust.  To help us
 test our implementation, our database allows the user to enable and disable
 Differential Privacy. When Differential Privacy is enabled, the user is also
-able to configure {\textepsilon} and query limit.
+able to configure {\textepsilon} and the query limit.
 
 The database reads the data from a CSV file which is specified by the user and
 then allows the following aggregate, or summary, functions on the data:
@@ -368,7 +370,7 @@ then allows the following aggregate, or summary, functions on the data:
 \end{itemize}
 
 % How to compute statistic (e.g. mean = total / count)
-Calculating these statistics is merely a set of trivial mathematical equations.
+Calculating these statistics is a set of trivial mathematical equations.
 Finding $\Delta f$, however is non-trivial. For each summary statistic, we must
 determine the value that will affect the statistic the most. To do this we
 % TODO: describe how to find Δf for each of the statistics.
@@ -390,6 +392,8 @@ the actual statistic, but this can easily be removed in future implementations.
 
 \subsection{Crafted Queries}\label{sec:crafted-queries}
 % TODO: more here
+After generating our dataset, we crafted a set of queries that would to test the
+effectiveness of our Differential Privacy database implementation.
 
 % (5) description and analysis of the key results and observations
 \section{Results}\label{sec:results}
@@ -438,29 +442,28 @@ way, Abel Woods' privacy is protected.
 
 % (6) discussion of the limitations and potential future work
 \section{Limitations}\label{sec:limitations}
-Our differential privacy implementation is very limited. Some of the limitations
-are listed below.
+Our Differential Privacy implementation is very limited. Some of the limitations
+include:
 \begin{itemize}
     \item Our implementation does not parse actual SQL queries. However, we
         have designed our program in a way that makes it easy to add a parsing
         engine on top of our program.
     \item Our implementation only works on a small set of aggregate functions.
-        Future iterations of this project could implement more of these
-        functions.
+        Future iterations of this project could implement more functions.
     \item Our implementation supports a very limited set of SQL operations. For
         example, it does not support \texttt{join} statements.  Future
         iterations of this project could implement more of the SQL standard.
     \item Our implementation can only process numerical data and is limited to
-        the Laplace Mechanism. Adding alternative differential privacy mechanism
+        the Laplace Mechanism. Adding alternative Differential Privacy mechanism
         such as the Exponential Mechanism would greatly improve the practicality
-        of our differential privacy implementation.
+        of our Differential Privacy implementation.
     \item Our implementation is not heavily optimized. Currently, each query has
         $\mathcal{O}(n^2)$ algorithmic complexity. In further iterations of our
         implementation, we could improve the performance of our system using
         caching methods and by optimizing the algorithms we are using.
 \end{itemize}
 
-Although our differential privacy implementation is limited, it was very
+Although our Differential Privacy implementation is limited, it was very
 effective for our experiment.
 % TODO: add more here?
 
@@ -472,20 +475,31 @@ privacy was adopted by a larger percentage of the industry, more statistical
 databases with sensitive information would be resistant to inference attacks.
 
 Software engineers have a great opportunity to create implementations of
-differential privacy suitable for use in general industry applications. Such an
+differential Privacy suitable for use in general industry applications. Such an
 implementation could be a library which other programmers could include in their
 project using dependency managers such as \texttt{pip}, \texttt{npm}, or
 \texttt{cargo}. The creation of these general-purpose libraries could help make
-differential privacy more accessible and cost effective for industry
-professionals. This would help increase adoption of differential privacy and
+differential Privacy more accessible and cost effective for industry
+professionals. This would help increase adoption of Differential Privacy and
 result in an overall improvement of user's privacy in the industry.
 % TODO: more here?
 
 % (7) conclusion
 \section{Conclusion}\label{sec:conclusion}
-% What we expected
-% What we got
-% Limitations of DP
+Before starting on this project, our understanding of Differential Privacy was
+very limited. We expected that we would need to parse each query and handle a
+large number of cases to ensure the privacy of the data.
+% TODO: more of what we expected
+After significant research, we found implementing of Differential Privacy would
+not require significant query parsing or edge-case handling. We were surprised
+by the mathematical rigor of Differential Privacy.
+% TODO: more of what we got, also clean up the above, it's basically a brain
+% dump
+
+Even from our limited experience implementing a simple Differential Privacy
+solution, we were able to demonstrate its effectiveness at protecting users'
+privacy. Despite its usefulness, Differential Privacy has not seen significant
+adoption in industry, thus, we % TODO
 % call on industry to make DP libraries (because that's what some of the other
 % papers did and we want to sound as pretentious as possible)
 % TODO: more here?
