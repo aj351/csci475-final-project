@@ -374,12 +374,6 @@ then allows the following aggregate, or summary, functions on the data:
     \item \textbf{\texttt{SD}}: the standard deviation of the column
 \end{itemize}
 
-% How to compute statistic (e.g. mean = total / count)
-Calculating these statistics is merely a set of trivial mathematical equations.
-Finding $\Delta f$, however is non-trivial. For each summary statistic, we must
-determine the value that will affect the statistic the most. To do this we
-% TODO: describe how to find Δf for each of the statistics.
-
 % Where clause
 Our database implementation allows the user to specify a \texttt{WHERE} clause.
 Currently, we implement this as a directly evaluated Python expression which is
@@ -395,12 +389,13 @@ prevent code injection attacks.
 % TODO: Filters rows with user-specified where clause (python expression)
 % TODO: Handles edge cases where 1 or 0 rows are returned
 
-Once the statistic and $\Delta f$ are calculated, noise is added according to
-the Laplace Distribution as described in Section~\ref{sec:using-laplace-dp}.
-This privatized result is then displayed. For testing purposes, we also output
-the actual statistic, but this can easily be removed in future implementations.
+The statistic and $\Delta f$ are calculated using the functions described in
+section \ref{sec:summary-functions}. Noise is added according to the Laplace
+Distribution as described in Section~\ref{sec:using-laplace-dp}. This privatized
+result is then displayed. For testing purposes, we also output the actual
+statistic, but this can easily be removed in future implementations.
 
-\subsection{Summary Functions}
+\subsection{Summary Functions}\label{sec:summary-functions}
 
 The statistic $f$ over values $D$ is $f(D)$. The sensitivity of the statistic is
 $\Delta f(D) = |f(D) - f(D')|$ where $D' \subset D$ and $|D'| = |D| - 1$. $D'$
@@ -516,32 +511,45 @@ the age of, Abel Woods, we will get $10409 - 10445 = 49$, a 48\% error. In this
 way, Abel Woods' privacy is protected.
 
 % (6) discussion of the limitations and potential future work
-\section{Limitations}\label{sec:limitations}
-Our differential privacy implementation is very limited. Some of the limitations
-are listed below.
-\begin{itemize}
-    \item Our implementation does not parse actual SQL queries. However, we
-        have designed our program in a way that makes it easy to add a parsing
-        engine on top of our program.
-    \item Our implementation only works on a small set of aggregate functions.
-        Future iterations of this project could implement more of these
-        functions.
-    \item Our implementation supports a very limited set of SQL operations. For
-        example, it does not support \texttt{join} statements.  Future
-        iterations of this project could implement more of the SQL standard.
-    \item Our implementation can only process numerical data and is limited to
-        the Laplace Mechanism. Adding alternative differential privacy mechanism
-        such as the Exponential Mechanism would greatly improve the practicality
-        of our differential privacy implementation.
-    \item Our implementation is not heavily optimized. Currently, each query has
-        $\mathcal{O}(n^2)$ algorithmic complexity. In further iterations of our
-        implementation, we could improve the performance of our system using
-        caching methods and by optimizing the algorithms we are using.
-\end{itemize}
 
-Although our differential privacy implementation is limited, it was very
-effective for our experiment.
-% TODO: add more here?
+\section{Limitations}\label{sec:limitations}
+% SAM COMMENT: I am not really happy with this section at all!! I will rewrite
+% it later. A lot of these 'limitations' are simply untrue.
+
+% Our differential privacy implementation is very limited. Some of the limitations
+% are listed below.
+% \begin{itemize}
+%     \item Our implementation does not parse actual SQL queries. However, we
+%         have designed our program in a way that makes it easy to add a parsing
+%         engine on top of our program.
+%     % TODO: We have quite a large set of functions! What are you talking about?
+%     \item %Our implementation only works on a small set of aggregate functions.%
+%         Future iterations of this project could implement more statistical
+%         functions.
+%     \item Our implementation supports a very limited set of SQL operations. For
+%         example, it does not support \texttt{join} statements.  Future
+%         iterations of this project could implement more of the SQL standard.
+%     % SAM COMMENT: I am not sure if following limitation is really true. We have
+%     % categorical data, and we can summarize it using `count`. We don't use
+%     % exponential mech. for that as of now, but I am not sure if that is a
+%     % problem. Plus, it would be pretty trivial to add if I cleaned things up.
+
+%     % \item Our implementation is limited to the Laplace Mechanism. Adding
+%     %    alternative differential privacy mechanism such as the Exponential
+%     %    Mechanism might make what...?
+%     \item Our implementation is not heavily optimized. The performance of our
+%         database could be improved drastically in future versions.
+%     % SAM COMMENT: What about this?
+%     \item Out code base is not particularly extendable. Future implementations
+%     could clean things up a lot.
+% \end{itemize}
+
+% % SAM COMMENT: What? It is not really *that* limited... we are not missing any
+% % of the fundamental building-blocks. It is mostly a matter of adding more
+% % functionality to the database. The DP portion of it is fully implemented.
+% Although our differential privacy implementation is limited, it was very
+% effective for our experiment.
+% % TODO: add more here?
 
 \section{Future Work}\label{sec:future-work}
 Differential Privacy is a relatively new method of protecting data in a
