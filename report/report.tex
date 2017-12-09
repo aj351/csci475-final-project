@@ -12,11 +12,18 @@
 \usepackage{tipa}
 \usepackage{mdframed}
 \usepackage[inline]{enumitem}
+\usepackage{environ}
 
 \addbibresource{../references.bib}
 
 \MakeOuterQuote{"}
 \setminted{autogobble,python3,mathescape,frame=lines,framesep=2mm,fontsize=\footnotesize}
+
+\NewEnviron{equations}{%
+\begin{equation}\begin{split}
+    \BODY
+\end{split}\end{equation}
+}
 
 \usepackage{pgfplots}
 \pgfplotsset{compat=newest}
@@ -381,12 +388,84 @@ vulnerability, but our goal is to study Differential Privacy, not code injection
 prevention. Future iterations of our project could wrap this functionality and
 prevent code injection attacks.
 
+% TODO: reads CSV
+% TODO: implemented sum, count, min, max, mean, variance, sd
+% TODO:         How to compute statistic (e.g. mean = total / count)
+% TODO          How to find Δf (e.g. from most extreme value)
+% TODO: Filters rows with user-specified where clause (python expression)
 % TODO: Handles edge cases where 1 or 0 rows are returned
 
 Once the statistic and $\Delta f$ are calculated, noise is added according to
 the Laplace Distribution as described in Section~\ref{sec:using-laplace-dp}.
 This privatized result is then displayed. For testing purposes, we also output
 the actual statistic, but this can easily be removed in future implementations.
+
+\subsection{Summary Functions}
+
+The statistic $f$ over values $D$ is $f(D)$. The sensitivity of the statistic is
+$\Delta f(D) = |f(D) - f(D')|$ where $D' \subset D$ and $|D'| = |D| - 1$. $D'$
+is always chosen to maximize $\Delta f(D)$.
+
+Generally, $\Delta f(D)$ can be found by iterating over all possible $D'$ sets
+to find the maximum $|f(D) - f(D')|$. This often has $O(n^2)$ complexity and is
+very slow on large datasets. To allow for more performant queries, our
+implementation indvidually defines $f$ and $\Delta f$ for each of the following
+summary functions.
+
+\subsubsection{Count}
+
+Removing one row from the dataset decreases the row count
+by one.
+
+\begin{equations}
+    count(D) &= |D| \\
+    \Delta count(D) &= 1
+\end{equations}
+
+\subsubsection{Sum}
+
+The largest element in a set has the most influence on the
+set's sum.
+
+\begin{equations}
+    sum(D) &= \sum D \\
+    \Delta sum(D) &= max(D)
+\end{equations}
+
+\subsubsection{Mean}
+
+Mean is most changed by the addition or removal of elements with a high variance
+from the mean. So, let $d$ be some $d \in D$ where $|d - mean(D)|$ is maximal.
+
+\begin{equations}
+    mean(D) &= \frac{\sum D}{|D|} \\
+    \Delta mean(D) &= \left| \frac{\sum D}{|D|} - \frac{\sum (D) - d}{|D| - 1} \right|
+\end{equations}
+
+\subsubsection{Maximum}
+
+Let $l_n$ be the $n^\text{th}$ largest element in $D$. Since $max(D)$ is
+dependent only on $l_0$, $D'$ must not contain $l_0$.
+
+\begin{equations}
+    max(D) &= l_0 \\
+    \Delta max(D) &= l_0 - l_1
+\end{equations}
+
+\subsubsection{Minimum}
+
+Let $s_n$ be the $n^\text{th}$ smallest element in $D$. Since $min(D)$ is
+dependent only on $s_0$, $D'$ must not contain $s_0$.
+
+\begin{equations}
+    min(D) &= s_0 \\
+    \Delta min(D) &= s_1 - s_0
+\end{equations}
+
+\subsubsection{Variance \& Standard Deviation}
+
+We use the brute force method for these functions. A more efficient method
+certainly exists, but we have not yet implemented it.
 
 \subsection{Crafted Queries}\label{sec:crafted-queries}
 % TODO: more here
