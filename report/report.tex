@@ -14,6 +14,7 @@
 \usepackage{mdframed}
 \usepackage[inline]{enumitem}
 \usepackage{environ}
+\usepackage{varioref}
 
 \addbibresource{../references.bib}
 
@@ -54,25 +55,22 @@
 }
 
 \begin{document}
+\maketitle
+\thispagestyle{plain}
+\pagestyle{plain}
+
 % (1) an abstract
-\twocolumn[
-    \begin{@twocolumnfalse}
-    \maketitle
-    \end{@twocolumnfalse}
-    \begin{abstract}
-        Statistical databases have long been know to be vulnerable to inference
-        attacks.  We describe the nature of inference attacks and analyze one
-        method of mitigating these attacks called Differential Privacy. We
-        discuss two mechanisms for Differential Privacy. We then explain our
-        implementation of a simple Differential Privacy statistical database and
-        the experiments we performed on the database. We then analyze how well
-        our implementation achieves the objectives of Differential Privacy
-        databases. We conclude by calling on industry to create differential
-        privacy implementations that can be used in general applications.
-    \end{abstract}
-    \bigskip
-    \bigskip
-]
+\begin{abstract}
+    Statistical databases have long been know to be vulnerable to inference
+    attacks.  We describe the nature of inference attacks and analyze one method
+    of mitigating these attacks called Differential Privacy. We discuss two
+    mechanisms for Differential Privacy. We then explain our implementation of a
+    simple Differential Privacy statistical database and the experiments we
+    performed on the database. We then analyze how well our implementation
+    achieves the objectives of Differential Privacy databases. We conclude by
+    calling on industry to create differential privacy implementations that can
+    be used in general applications.
+\end{abstract}
 
 % (2) introduction (including the background, motivation, and goal)
 \section{Introduction}
@@ -319,22 +317,6 @@ the field of Differential Privacy. We conclude in Section~\ref{sec:conclusion}
 and call on industry to create effective, easy-to-use Differential Privacy
 implementations for inclusion in general industry applications.
 
-% Have to include this table here so it shows up on the next page
-\begin{table*}[h]
-    \caption{Columns in Our Sample Dataset}\label{tab:cols}
-    \centering
-    \begin{tabular}{l | l | l}
-        \textbf{Field} & \textbf{Column Name} & \textbf{Generation Method} \\
-        \hline
-        Name & \texttt{name} & the \texttt{names} Python library \\
-        Age & \texttt{age} & uniformly distributed between 18 and 65 \\
-        Income & \texttt{income} & distributed log-normal \\
-        Zip Code & \texttt{zip} & from a random set of \textasciitilde40
-            five-digit numbers \\
-        Net-worth & \texttt{net\_worth} & from age, income, and a random offset
-    \end{tabular}
-\end{table*}
-
 % (3) key idea and approach (e.g., survey, testbed, system
 % design/implementation, experiments, etc.)
 \section{Database Implementation}\label{sec:db-impl}
@@ -370,7 +352,12 @@ vulnerability, but our goal is to study Differential Privacy, not code injection
 prevention. Future iterations of our project could wrap this functionality and
 prevent code injection attacks.
 
-% TODO: Handles edge cases where 1 or 0 rows are returned
+Our implementation also handles edge cases where zero or one row is returned to
+avoid divide-by-zero errors.  For most statistics, in the case when one row is
+returned, we merely use the value of that row as the sensitivity of the query.
+For the case that zero rows are returned, we add a fake entry whose value is the
+mean of the column and then handle it like the one row case. Future iterations
+of our project could improve the robustness of our edge case handling.
 
 The statistic and $\Delta f$ are calculated using the functions described in
 Section~\ref{sec:summary-functions}. Noise is added according to the Laplace
@@ -444,9 +431,21 @@ dependent only on $s_0$, $D'$ must not contain $s_0$.
 We use the brute force method for these functions. A more efficient method
 certainly exists, but we have not yet implemented it.
 
-\subsection{Edge Cases}\label{sec:edge-cases}
-Depending on the WHERE clause, there may be a single or no rows to
-summarize. These cases must be handled carefully to preserve privacy.
+% Have to include this table here so it shows up on the next page
+\begin{table*}[h]
+    \caption{Columns in Our Sample Dataset}\label{tab:cols}
+    \centering
+    \begin{tabular}{l | l | l}
+        \textbf{Field} & \textbf{Column Name} & \textbf{Generation Method} \\
+        \hline
+        Name & \texttt{name} & the \texttt{names} Python library \\
+        Age & \texttt{age} & uniformly distributed between 18 and 65 \\
+        Income & \texttt{income} & distributed log-normal \\
+        Zip Code & \texttt{zip} & from a random set of \textasciitilde40
+            five-digit numbers \\
+        Net-worth & \texttt{net\_worth} & from age, income, and a random offset
+    \end{tabular}
+\end{table*}
 
 % (4) activities (such as literature study and experiments) that you performed
 \section{Experiment}\label{sec:experiment}
@@ -457,7 +456,7 @@ to attack our database (Section~\ref{sec:crafted-queries}).
 
 \subsection{Dataset}\label{sec:dataset}
 To test our database, we created a dataset with 10,000 data points (rows). The
-columns for each row are listed in Table~\ref{tab:cols}.  The dataset was
+columns for each row are listed in Table~\vref{tab:cols}.  The dataset was
 generated using a Python program and is output to a comma separated value (CSV)
 file. We chose to use a CSV file for simplicity, however future iterations of
 our project could use a more sophisticated data store.
@@ -699,13 +698,19 @@ include:
         the Laplace Mechanism. Adding alternative Differential Privacy mechanism
         such as the Exponential Mechanism would greatly improve the practicality
         of our Differential Privacy implementation.
-    \item Our implementation is not heavily optimized. Currently, each query has
-        $\mathcal{O}(n^2)$ algorithmic complexity. In further iterations of our
-        implementation, we could improve the performance of our system using
+    \item Our implementation is not heavily optimized. Currently, some queries
+        have $\mathcal{O}(n^2)$ algorithmic complexity. In further iterations of
+        our implementation, we could improve the performance of our system using
         caching methods and by optimizing the algorithms we are using.
-   \item Out code base is not particularly extendable. Future implementations
-        could clean things up a lot.
-   % TODO: edge case handling is sub-optimal
+    \item Our code base is not particularly extensible. Future implementations
+        could improve the software design to make it adhere to good software
+        engineering principles.
+    \item We did not do any research regarding the proper handling of these edge
+        cases where one or zero rows match the query. Our implementation seems
+        to protect the privacy of individuals in these cases as shown by Query
+        Set~\ref{qs:peter}. However, we have no research to back up the validity
+        of our approach, and thus there may be some vulnerabilities in our
+        implementation.
 \end{itemize}
 
 Although our Differential Privacy implementation is not complete, our experiment
