@@ -393,7 +393,7 @@ prevent code injection attacks.
 % TODO: Handles edge cases where 1 or 0 rows are returned
 
 The statistic and $\Delta f$ are calculated using the functions described in
-section \ref{sec:summary-functions}. Noise is added according to the Laplace
+Section~\ref{sec:summary-functions}. Noise is added according to the Laplace
 Distribution as described in Section~\ref{sec:using-laplace-dp}. This privatized
 result is then displayed. For testing purposes, we also output the actual
 statistic, but this can easily be removed in future implementations.
@@ -401,11 +401,17 @@ statistic, but this can easily be removed in future implementations.
 \subsection{Summary Functions}\label{sec:summary-functions}
 In this section we define each of the summary functions $f$ over the set of
 values $D$. We also define the sensitivity $\Delta f$ for each summary function.
-For any statistic $f(D)$, $\Delta f(D)$ is defined as follows:
-\begin{equation}
-    \Delta f(D) = \left|f(D) - f(D')\right|
-\end{equation}
-where $D' \subset D$, $|D'| = |D| - 1$, and $D'$ maximizes $\Delta f(D)$.
+\begin{mdframed}
+    \begin{definition}
+        For any statistic $f(D)$, the \textbf{sensitivity of a query}, $\Delta
+        f(D)$, is defined as follows:
+        \begin{equation}
+            \Delta f(D) = \left|f(D) - f(D')\right|
+        \end{equation}
+        where $D' \subset D$, $|D'| = |D| - 1$, and $D'$ maximizes $\Delta
+        f(D)$.
+    \end{definition}
+\end{mdframed}
 
 Generally, $\Delta f(D)$ can be found by iterating over all possible $D'$ and
 finding the maximum $|f(D) - f(D')|$. This brute force algorithm often has $\mathcal{O}(n^2)$
