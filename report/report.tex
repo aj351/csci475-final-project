@@ -458,6 +458,10 @@ dependent only on $s_0$, $D'$ must not contain $s_0$.
 We use the brute force method for these functions. A more efficient method
 certainly exists, but we have not yet implemented it.
 
+\subsection{Edge Cases}\label{sec:edge-cases}
+Depending on the WHERE clause, there may be a single or no rows to
+summarize. These cases must be handled carefully to preserve privacy.
+
 \subsection{Crafted Queries}\label{sec:crafted-queries}
 After generating our dataset, we crafted a set of queries that would to test the
 effectiveness of our Differential Privacy database implementation. Because we
@@ -477,6 +481,32 @@ Section~\ref{sec:dataset}.)
     \end{minted}
     \caption{Identifying Abel Woods' Age}
     \label{qs:abel}
+\end{listing}
+
+\begin{listing}[H]
+    \begin{minted}{sql}
+        SELECT MEAN(age)
+          FROM table
+          WHERE net_worth + 1 >
+            (SELECT MAX(net_worth) FROM table)
+
+        SELECT MEAN(income)
+          FROM table
+          WHERE net_worth + 1 >
+            (SELECT MAX(net_worth) FROM table)
+    \end{minted}
+    \caption{Identifying the age and income of the ritchest person}
+    \label{qs:richest-person}
+\end{listing}
+
+\begin{listing}[H]
+    \begin{minted}{sql}
+        SELECT COUNT(name)
+            FROM table
+            WHERE name == "Peter Gist"
+    \end{minted}
+    \caption{Discovering if Peter Gist is in the database}
+    \label{qs:peter}
 \end{listing}
 % TODO: more here
 
@@ -529,8 +559,8 @@ With Differential Privacy enabled, the output is as follows.
 \end{minted}
 From these queries, we can determine that the total age of the people in ZIP
 code 31643 is 10409, a 0.2\% error. If we attempt to use these queries to find
-the age of, Abel Woods, we will get $10409 - 10445 = 49$, a 48\% error. We can
-see that, with Differential Privacy enabled, Abel Woods' privacy is protected.
+the age of Abel Woods we will get $10409 - 10445 = 49$, a 48\% error. We can
+see that with Differential Privacy enabled, Abel Woods' privacy is protected.
 
 % (6) discussion of the limitations and potential future work
 \section{Limitations}\label{sec:limitations}
