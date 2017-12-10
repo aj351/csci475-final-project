@@ -8,6 +8,7 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
+\usepackage{listings}
 \usepackage{minted}
 \usepackage{tipa}
 \usepackage{mdframed}
@@ -17,7 +18,8 @@
 \addbibresource{../references.bib}
 
 \MakeOuterQuote{"}
-\setminted{autogobble,python3,mathescape,frame=lines,framesep=2mm,fontsize=\footnotesize}
+\setminted{autogobble,python3,mathescape,frame=lines,framesep=2mm,fontsize=\footnotesize,escapeinside=||}
+\renewcommand\listingscaption{Query Set}
 
 \NewEnviron{equations}{%
 \begin{equation}\begin{split}
@@ -377,10 +379,8 @@ then allows the following aggregate, or summary, functions on the data:
 \end{itemize}
 
 % How to compute statistic (e.g. mean = total / count)
-Calculating these statistics is a set of trivial mathematical equations.
-Finding $\Delta f$, however is non-trivial. For each summary statistic, we must
-determine the value that will affect the statistic the most. To do this we
-% TODO: describe how to find Δf for each of the statistics.
+We describe how we calculate these statistics and how we find $\Delta f$ for
+each of these functions in Section~\ref{sec:summary-functions}.
 
 % Where clause
 Our database implementation allows the user to specify a \texttt{WHERE} clause.
@@ -390,11 +390,6 @@ vulnerability, but our goal is to study Differential Privacy, not code injection
 prevention. Future iterations of our project could wrap this functionality and
 prevent code injection attacks.
 
-% TODO: reads CSV
-% TODO: implemented sum, count, min, max, mean, variance, sd
-% TODO:         How to compute statistic (e.g. mean = total / count)
-% TODO          How to find Δf (e.g. from most extreme value)
-% TODO: Filters rows with user-specified where clause (python expression)
 % TODO: Handles edge cases where 1 or 0 rows are returned
 
 The statistic and $\Delta f$ are calculated using the functions described in
@@ -404,84 +399,101 @@ result is then displayed. For testing purposes, we also output the actual
 statistic, but this can easily be removed in future implementations.
 
 \subsection{Summary Functions}\label{sec:summary-functions}
+In this section we define each of the summary functions $f$ over the set of
+values $D$. We also define the sensitivity $\Delta f$ for each summary function.
+For any statistic $f(D)$, $\Delta f(D)$ is defined as follows:
+\begin{equation}
+    \Delta f(D) = \left|f(D) - f(D')\right|
+\end{equation}
+where $D' \subset D$, $|D'| = |D| - 1$, and $D'$ maximizes $\Delta f(D)$.
 
-The statistic $f$ over values $D$ is $f(D)$. The sensitivity of the statistic is
-$\Delta f(D) = |f(D) - f(D')|$ where $D' \subset D$ and $|D'| = |D| - 1$. $D'$
-is always chosen to maximize $\Delta f(D)$.
-
-Generally, $\Delta f(D)$ can be found by iterating over all possible $D'$ sets
-to find the maximum $|f(D) - f(D')|$. This often has $O(n^2)$ complexity and is
-very slow on large datasets. To allow for more performant queries, our
-implementation indvidually defines $f$ and $\Delta f$ for each of the following
-summary functions.
+Generally, $\Delta f(D)$ can be found by iterating over all possible $D'$ and
+finding the maximum $|f(D) - f(D')|$. This brute force algorithm often has $\mathcal{O}(n^2)$
+complexity and is very slow on large datasets. To allow for more performant
+queries, our implementation indvidually defines $f$ and $\Delta f$ for each of
+the following summary functions.
 
 \subsubsection{Count}
-
-Removing one row from the dataset decreases the row count
-by one.
-
+Removing any one row from the dataset decreases the row count by one. Thus,
+sensitivity of count is always 1.
 \begin{equations}
-    count(D) &= |D| \\
-    \Delta count(D) &= 1
+    \text{count}(D) &= |D| \\
+    \Delta\text{count}(D) &= 1
 \end{equations}
 
 \subsubsection{Sum}
-
-The largest element in a set has the most influence on the
-set's sum.
-
+The largest element in a set has the most influence on the set's sum. Thus the
+sensitivity of the statistic is always the maximum $d \in D$.
 \begin{equations}
-    sum(D) &= \sum D \\
-    \Delta sum(D) &= max(D)
+    \text{sum}(D) &= \sum{D} \\
+    \Delta\text{sum}(D) &= \max(D)
 \end{equations}
 
 \subsubsection{Mean}
-
 Mean is most changed by the addition or removal of elements with a high variance
-from the mean. So, let $d$ be some $d \in D$ where $|d - mean(D)|$ is maximal.
-
+from the mean. Let $d$ be some $d \in D$ where $|d - \text{mean}(D)|$ is
+maximal, then
 \begin{equations}
-    mean(D) &= \frac{\sum D}{|D|} \\
-    \Delta mean(D) &= \left| \frac{\sum D}{|D|} - \frac{\sum (D) - d}{|D| - 1} \right|
+    \text{mean}(D) &= \frac{\sum D}{|D|} \\
+    \Delta\text{mean}(D) &= \left| \frac{\sum D}{|D|} - \frac{\sum (D) - d}{|D| - 1} \right|
 \end{equations}
 
 \subsubsection{Maximum}
-
-Let $l_n$ be the $n^\text{th}$ largest element in $D$. Since $max(D)$ is
+Let $l_n$ be the $n^\text{th}$ largest element in $D$. Since $\max(D)$ is
 dependent only on $l_0$, $D'$ must not contain $l_0$.
-
 \begin{equations}
-    max(D) &= l_0 \\
-    \Delta max(D) &= l_0 - l_1
+    \max(D) &= l_0 \\
+    \Delta\max(D) &= l_0 - l_1
 \end{equations}
 
 \subsubsection{Minimum}
-
-Let $s_n$ be the $n^\text{th}$ smallest element in $D$. Since $min(D)$ is
+Let $s_n$ be the $n^\text{th}$ smallest element in $D$. Since $\min(D)$ is
 dependent only on $s_0$, $D'$ must not contain $s_0$.
-
 \begin{equations}
-    min(D) &= s_0 \\
-    \Delta min(D) &= s_1 - s_0
+    \min(D) &= s_0 \\
+    \Delta\min(D) &= s_1 - s_0
 \end{equations}
 
 \subsubsection{Variance \& Standard Deviation}
-
 We use the brute force method for these functions. A more efficient method
 certainly exists, but we have not yet implemented it.
 
 \subsection{Crafted Queries}\label{sec:crafted-queries}
-% TODO: more here
 After generating our dataset, we crafted a set of queries that would to test the
-effectiveness of our Differential Privacy database implementation.
+effectiveness of our Differential Privacy database implementation. Because we
+have access to the underlying data, we were able to craft these queries with
+inside knowledge. Although our database does not parse SQL queries, we will use
+SQL here for clarity. Each set of queries targets a certain person's sensitive
+information. The sets of queries we created were as follows. (Note,
+\texttt{table} is the single table that we created in
+Section~\ref{sec:dataset}.)
+
+\begin{listing}[H]
+    \begin{minted}{sql}
+        SELECT SUM(age)     SELECT SUM(age)
+          FROM table          FROM table
+         WHERE zip = 31643   WHERE zip = 31643
+                               AND name != "Abel Woods"
+    \end{minted}
+    \caption{Identifying Abel Woods' Age}
+    \label{qs:abel}
+\end{listing}
+% TODO: more here
 
 % (5) description and analysis of the key results and observations
 \section{Results}\label{sec:results}
 % TODO: more here
+After creating a dataset, implementing a database, and choosing a set of queries
+to test the database with, we performed our experiment. We used performed each
+of the queries on the dataset with Differential Privacy disabled and enabled and
+compared the results.
 
-With Differential Privacy disabled.
+\subsection{Query Set~\ref{qs:abel}}
+
+With Differential Privacy disabled, our database implementation output is as
+follows.
 \begin{minted}{html}
-    use dp (y/n): n
+    use dp (y/n): |$\text{\textbf{n}}$|
     database csv: bigdata.csv
     =================
     summarize field: age
