@@ -510,7 +510,7 @@ From these queries, we can determine the total age of the people in ZIP code
 31643 is 10412. However, we can also infer that Abel Woods is $10412 - 10379 =
 33$ years old. This is a violation of privacy.
 
-With Differential Privacy enabled.
+With Differential Privacy enabled, the output is as follows.
 \begin{minted}{html}
     use dp (y/n): |$\text{\textbf{\texttt{y}}}$|
     epsilon: 5
@@ -529,8 +529,8 @@ With Differential Privacy enabled.
 \end{minted}
 From these queries, we can determine that the total age of the people in ZIP
 code 31643 is 10409, a 0.2\% error. If we attempt to use these queries to find
-the age of, Abel Woods, we will get $10409 - 10445 = 49$, a 48\% error. In this
-way, Abel Woods' privacy is protected.
+the age of, Abel Woods, we will get $10409 - 10445 = 49$, a 48\% error. We can
+see that, with Differential Privacy enabled, Abel Woods' privacy is protected.
 
 % (6) discussion of the limitations and potential future work
 \section{Limitations}\label{sec:limitations}
