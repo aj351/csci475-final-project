@@ -562,6 +562,64 @@ code 31643 is 10409, a 0.2\% error. If we attempt to use these queries to find
 the age of Abel Woods we will get $10409 - 10445 = 49$, a 48\% error. We can
 see that with Differential Privacy enabled, Abel Woods' privacy is protected.
 
+\subsection{Query Set~\ref{qs:richest-person}}
+
+\begin{minted}{html}
+    use dp (y/n): |$\text{\textbf{\texttt{n}}}$|
+    database csv: bigdata.csv
+    =================
+    summarize field: net_worth
+    summary function: max
+    where: True
+    |$\text{\textbf{\texttt{5246937}}}$|
+    =================
+    summarize field: income
+    summary function: mean
+    where: net_worth > 5246936
+    |$\text{\textbf{\texttt{304322}}}$|
+    =================
+    summarize field: age
+    summary function: mean
+    where: net_worth > 5246936
+    |$\text{\textbf{\texttt{65}}}$|
+
+\end{minted}
+
+\begin{minted}{html}
+    use dp (y/n): |$\text{\textbf{\texttt{y}}}$|
+    epsilon: 3
+    query limit: 3
+    database csv: bigdata.csv
+    =================
+    summarize field: net_worth
+    summary function: max
+    where: True
+    # stat=5246937 b=1332431
+    |$\text{\textbf{\texttt{3900194}}}$|
+    =================
+    summarize field: income
+    summary function: mean
+    where: net_worth > 3900194
+    # stat=275988 b=28335
+    |$\text{\textbf{\texttt{240135}}}$|
+    =================
+    summarize field: age
+    summary function: mean
+    where: net_worth > 3900194
+    # stat=63 b=2
+    |$\text{\textbf{\texttt{62}}}$|
+\end{minted}
+
+The big change here is the much lower \texttt{net\_worth}. Maximums are very
+sensitive because they reflect only the most extreme data points. As a result, a
+lot of randomness must be added to protect them. In this case, the $b$ value for
+maximum \texttt{net\_worth} is over 1.3 million, resulting in a 25\% error. The
+income and age end up being quite accurate, but only because the lower net worth
+caused us to match 2 different indivudals, both of whom happened to be old and
+rich. The ritchest person's privacy is still very safe.
+
+\subsection{Query Set~\ref{qs:peter}}
+
 % (6) discussion of the limitations and potential future work
 \section{Limitations}\label{sec:limitations}
 Our Differential Privacy implementation is very limited. Some of the limitations
