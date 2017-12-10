@@ -116,17 +116,17 @@ how the attacker managed it, we will assume for simplicity's sake that the
 database is queried before and after the addition of a single row.
 
 \subsection{Previous Attempts at Anonymizing Statistical Data}
-Many attempts have been made to privatize data in the past and many are still in
-use today. However everything from simply removing columns containing personally
+Attempts have been made to privatize data in the past and many are still in use
+today. However everything from simply removing columns containing personally
 identifiable information to advanced techniques such as as k-anonymity and
 l-diversity have been shown to be vulnerable to attack~\cite{Atockar:2014}.
-K-anonymity, for example, does not include any randomization, attackers can
-still make inferences about data sets~\cite{Aggarwal:2005}.
+K-anonymity, for example, does not include any randomization and thus attackers
+can still make inferences about data sets~\cite{Aggarwal:2005}.
 
 \subsection{Differential Privacy}
-In 2006, Cynthia Dwork proposed a new technique to reduce the risk of a
-successful inference attack called \textit{Differential
-    Privacy}~\cite{Hilton:DP:history}. The goal of Differential Privacy is to
+In 2006, Cynthia Dwork, a researcher at Microsoft, proposed a new technique to
+reduce the risk of a successful inference attack called \textit{Differential
+Privacy}~\cite{Hilton:DP:history}. The goal of Differential Privacy is to
 maximize the statistical accuracy of queries on a statistical database while
 also maximizing the privacy of the individual records. It does this by
 introducing noise into the dataset. This randomness reduces the likelihood of
@@ -239,11 +239,11 @@ the random variate for the Laplace Distribution which is defined as follows:
     \begin{definition}\label{def:laplace-variate}
         The \textbf{Laplace Random Variate} is
         \begin{equation}
-            X(u) = \left\{\begin{matrix}
-                    -b \log|u| & \text{if }u > 0
-                    \\[8pt]
+            X(u) =
+                \begin{cases}
+                    -b \log|u| & \text{if }u > 0\\
                     b \log|u| & \text{if }u \leq 0
-            \end{matrix}\right.
+                \end{cases}
         \end{equation}
         where $u$ is uniformly distributed in the range $(-1, 1)$.
     \end{definition}
