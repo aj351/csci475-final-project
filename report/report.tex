@@ -493,18 +493,18 @@ compared the results.
 With Differential Privacy disabled, our database implementation output is as
 follows.
 \begin{minted}{html}
-    use dp (y/n): |$\text{\textbf{n}}$|
+    use dp (y/n): |$\text{\textbf{\texttt{n}}}$|
     database csv: bigdata.csv
     =================
     summarize field: age
     summary function: sum
     where: zip == 31643
-    10412
+    |$\text{\textbf{\texttt{10412}}}$|
     =================
     summarize field: age
     summary function: sum
     where: zip == 31643 and name != "Abel Woods"
-    10379
+    |$\text{\textbf{\texttt{10379}}}$|
 \end{minted}
 From these queries, we can determine the total age of the people in ZIP code
 31643 is 10412. However, we can also infer that Abel Woods is $10412 - 10379 =
@@ -512,7 +512,7 @@ From these queries, we can determine the total age of the people in ZIP code
 
 With Differential Privacy enabled.
 \begin{minted}{html}
-    use dp (y/n): y
+    use dp (y/n): |$\text{\textbf{\texttt{y}}}$|
     epsilon: 5
     query limit: 2
     database csv: bigdata.csv
@@ -520,12 +520,12 @@ With Differential Privacy enabled.
     summarize field: age
     summary function: sum
     where: zip == 31643
-    10409
+    |$\text{\textbf{\texttt{10409}}}$|
     =================
     summarize field: age
     summary function: sum
     where: zip == 31643 and name != "Abel Woods"
-    10435
+    |$\text{\textbf{\texttt{10435}}}$|
 \end{minted}
 From these queries, we can determine that the total age of the people in ZIP
 code 31643 is 10409, a 0.2\% error. If we attempt to use these queries to find
