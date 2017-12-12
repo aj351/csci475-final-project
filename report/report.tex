@@ -62,10 +62,10 @@
 % (1) an abstract
 \begin{abstract}
     Statistical databases have long been known to be vulnerable to inference
-    attacks.  We describe the nature of inference attacks and analyze one method,
-    called Differential Privacy, of mitigating these attacks. We discuss two
-    mechanisms for Differential Privacy. We then explain our implementation of a
-    simple Differential Privacy statistical database and the experiments we
+    attacks.  We describe the nature of inference attacks and analyze one
+    method, called Differential Privacy, of mitigating these attacks. We discuss
+    two mechanisms for Differential Privacy. We then explain our implementation
+    of a simple Differential Privacy statistical database and the experiments we
     performed on the database. Then, we analyze how well our implementation
     achieves the objectives of Differential Privacy databases. We conclude by
     calling on industry to create differential privacy implementations that can
@@ -79,22 +79,21 @@ contained within the database. One of the desired properties of statistical
 databases is that nothing about an individual should be learnable from the
 database that cannot be learned without access to the
 database~\cite{Dwork:2006:DP}. In other words, gathering information about the
-individual records using allowed queries on the database should
-be impossible.
+individual records using allowed queries on the database should be impossible.
 
 Without any protections, well-crafted queries to a statistical database can
 implicitly reveal private information.  Such an attack is know as an
 \textit{inference attack}.  To understand these attacks, one must consider the
-case of two databases which differ by only a single row.  Consider, for
-example, a database which associates people with their incomes.  The query
+case of two databases which differ by only a single row.  Consider, for example,
+a database which associates people with their incomes.  The query
 
 \begin{minted}{sql}
     SELECT SUM(income) FROM table
 \end{minted}
 seems harmless at first. But if a new record were added and we ran the query
-again, the difference between the two results would represent the exact income of the
-new entry. If the attacker knows the identity of the person who was added, the
-privacy leak becomes even more severe.
+again, the difference between the two results would represent the exact income
+of the new entry. If the attacker knows the identity of the person who was
+added, the privacy leak becomes even more severe.
 
 Of course, an attacker may not have the luxury of always knowing when a new
 record will be added to the database, and of timing his queries accordingly. He
@@ -107,19 +106,20 @@ The query
       FROM table
      WHERE zip != 80127
 \end{minted}
-may be sufficient in a small-enough database; in a larger database, an attacker 
-may need to add more conditionals to ensure the queries jointly isolate a single row. 
-However, since the danger occurs when information about a single entry is returned, 
-regardless of how the attacker managed it, we will assume for simplicity's sake that the
-database is queried before and after the addition of a single row.
+may be sufficient in a small-enough database; in a larger database, an attacker
+may need to add more conditionals to ensure the queries jointly isolate a single
+row.  However, since the danger occurs when information about a single entry is
+returned, regardless of how the attacker managed it, we will assume for
+simplicity's sake that the database is queried before and after the addition of
+a single row.
 
 \subsection{Previous Attempts at Anonymizing Statistical Data}
 Attempts have been made to privatize data in the past and many are still in use
 today. However, everything from simply removing columns containing sensitive
-information to advanced techniques such as as k-anonymity and
-l-diversity have been shown to be vulnerable to attack~\cite{Atockar:2014}.
-K-anonymity, for example, does not include any randomization and thus attackers
-can still make inferences about data sets~\cite{Aggarwal:2005}.
+information to advanced techniques such as as k-anonymity and l-diversity have
+been shown to be vulnerable to attack~\cite{Atockar:2014}.  K-anonymity, for
+example, does not include any randomization and thus attackers can still make
+inferences about data sets~\cite{Aggarwal:2005}.
 
 \subsection{Differential Privacy}
 In 2006, Cynthia Dwork, a researcher at Microsoft, proposed a new technique to
@@ -130,10 +130,12 @@ also maximizing the privacy of the individual records. It does this by
 introducing noise into the dataset. This randomness reduces the likelihood of
 obtaining meaningful information about the individual records in the database.
 
-The real power of Differential Privacy is achieved when it is used in conjunction with a
-privacy bound, $\varepsilon$, as described in Section~\ref{sec:epsilon-dp}. We discuss the
-methods for generating random noise in Section~\ref{sec:dp-mech}. In Section~\ref{sec:using-laplace-dp}, 
-we explain details about how the one of the mechanisms is used to ensure differential privacy.
+The real power of Differential Privacy is achieved when it is used in
+conjunction with a privacy bound, $\varepsilon$, as described in
+Section~\ref{sec:epsilon-dp}. We discuss the methods for generating random noise
+in Section~\ref{sec:dp-mech}. In Section~\ref{sec:using-laplace-dp}, we explain
+details about how the one of the mechanisms is used to ensure differential
+privacy.
 
 \subsubsection{Epsilon-Differentially Private}\label{sec:epsilon-dp}
 One useful way of discussing Differential Privacy is to talk about what it means
@@ -174,9 +176,10 @@ There are two primary Differential Privacy Mechanisms: the Exponential Mechanism
 and the Laplace Mechanism. The Exponential Mechanism should be used on
 categorical, non-numeric data. For example, queries of the form ``What is the
 most common eye color in this room?'' should be protected using the Exponential
-Mechanism~\cites{Atockar:2014}[8]{Roth:2011:DP-exp}. The Laplace Mechanism should be used with
-non-categorical, real-value data~\cite{Geng:2014}. Because of the nature of our
-data, our primary focus for this project is the Laplace Mechanism.
+Mechanism~\cites{Atockar:2014}[8]{Roth:2011:DP-exp}. The Laplace Mechanism
+should be used with non-categorical, real-value data~\cite{Geng:2014}. Because
+of the nature of our data, our primary focus for this project is the Laplace
+Mechanism.
 
 Before we rigorously examine the mathematics, let us review our inputs and our
 goals:
@@ -226,8 +229,8 @@ Mathematically, the Laplace Distribution is defined as follows:
     \end{definition}
 \end{mdframed}
 
-For us, $\mu$ is 0; we can use the Zero-Centered Laplace Distribution, which has only one 
-parameter, $b$, the scale.
+For us, $\mu$ is 0; we can use the Zero-Centered Laplace Distribution, which has
+only one parameter, $b$, the scale.
 
 To draw a value from the Zero-Centered Laplace Distribution efficiently, we use
 the random variate for the Laplace Distribution which is defined as follows:
@@ -252,7 +255,6 @@ comes into play, however: the "sensitivity" of the database. This is defined as
 the maximum difference between the results of any query run on two databases
 which differ by only one row, as described above~\cite{Atockar:2014}. We shall
 assume
-
 \begin{minted}{sql}
     SELECT SUM(income) FROM table
 \end{minted}
@@ -273,18 +275,18 @@ epsilon-differential privacy. That is, we should add noise to the data drawn
 from a 0-centered Laplace distribution with scale parameter
 ${\Delta}f/\varepsilon$.
 
-A further consideration we must make is the possibility of multiple
-queries to the database. The Laplace distribution is symmetrical, so if
-unlimited queries were allowed, the attacker could simply run his query many
-times and take the average to extract sensitive data. So we must limit the
-number of queries allowed; fortunately, the calculation is linear. Assume we
-draw all noise from the same distribution (it would be possible to vary it but
-this unnecessarily complicates things), and that this distribution is Laplace,
-0-centered, with a privacy parameter $\varepsilon_i$ (that is, with scale
-parameter ${\Delta}f/\varepsilon_i$). If we limit learners to $k$ queries, our
-overall privacy budget is $k\varepsilon_i$. This privacy budget is our
-actual epsilon; as stated by Atockar, "it reflects the maximum privacy release
-allowable for the total query session"~\cite{Atockar:2014}.
+A further consideration we must make is the possibility of multiple queries to
+the database. The Laplace distribution is symmetrical, so if unlimited queries
+were allowed, the attacker could simply run his query many times and take the
+average to extract sensitive data. So we must limit the number of queries
+allowed; fortunately, the calculation is linear. Assume we draw all noise from
+the same distribution (it would be possible to vary it but this unnecessarily
+complicates things), and that this distribution is Laplace, 0-centered, with a
+privacy parameter $\varepsilon_i$ (that is, with scale parameter
+${\Delta}f/\varepsilon_i$). If we limit learners to $k$ queries, our overall
+privacy budget is $k\varepsilon_i$. This privacy budget is our actual epsilon;
+as stated by Atockar, "it reflects the maximum privacy release allowable for the
+total query session"~\cite{Atockar:2014}.
 
 So to sum it up practically: if we wish to make our database
 epsilon-differentially private as bounded by some value epsilon; our database
@@ -322,9 +324,9 @@ implementations for inclusion in general industry applications.
 Our actual database implementation was written in Python to speed up development
 time. If we were implementing this in an application that needed high
 performance, we would use a compiled language such as C or Rust.  To help us
-test our implementation, we designed our database to allow the user to enable and 
-disable Differential Privacy. When Differential Privacy is enabled, the user is also
-able to configure {\textepsilon} and the query limit.
+test our implementation, we designed our database to allow the user to enable
+and disable Differential Privacy. When Differential Privacy is enabled, the user
+is also able to configure {\textepsilon} and the query limit.
 
 The database reads the data from a CSV file which is specified by the user and
 then allows the following aggregate, or summary, functions on the data:
@@ -379,10 +381,10 @@ values $D$. We also define the sensitivity $\Delta f$ for each summary function.
 \end{mdframed}
 
 Generally, $\Delta f(D)$ can be found by iterating over all possible $D'$ and
-finding the maximum $|f(D) - f(D')|$. This brute force algorithm often has $\mathcal{O}(n^2)$
-complexity and is very slow on large datasets. To allow for more performant
-queries, our implementation indvidually defines $f$ and $\Delta f$ for each of
-the following summary functions.
+finding the maximum $|f(D) - f(D')|$. This brute force algorithm often has
+$\mathcal{O}(n^2)$ complexity and is very slow on large datasets. To allow for
+more performant queries, our implementation individually defines $f$ and $\Delta
+f$ for each of the following summary functions.
 
 \subsubsection{Count}
 Removing any one row from the dataset decreases the row count by one. Thus,
@@ -498,7 +500,7 @@ Section~\ref{sec:dataset}.)
           WHERE net_worth + 1 >
             (SELECT MAX(net_worth) FROM table)
     \end{minted}
-    \caption{Identifying the age and income of the ritchest person}
+    \caption{Identifying the age and income of the richest person}
     \label{qs:richest-person}
 \end{listing}
 
@@ -516,8 +518,8 @@ Section~\ref{sec:dataset}.)
 \section{Results}\label{sec:results}
 After creating a dataset, implementing a database, and choosing a set of queries
 with which to test the database, we performed our experiment. We ran each of the
-queries on the dataset with Differential Privacy disabled, and then with Differential
-Privacy enabled, and compared the results.
+queries on the dataset with Differential Privacy disabled, and then with
+Differential Privacy enabled, and compared the results.
 
 \subsection{Query Set~\ref{qs:abel}}
 
@@ -537,9 +539,10 @@ first query set is as follows.
     where: zip == 31643 and name != "Abel Woods"
     |$\text{\textbf{\texttt{10379}}}$|
 \end{minted}
-From this set of  queries, we can determine that the total age of the people in ZIP
-code 31643 is 10412; this is not a privacy violation. However, we can also infer that 
-Abel Woods is $10412 - 10379 = 33$ years old. This is a violation of privacy.
+From this set of  queries, we can determine that the total age of the people in
+ZIP code 31643 is 10412; this is not a privacy violation. However, we can also
+infer that Abel Woods is $10412 - 10379 = 33$ years old. This is a violation of
+privacy.
 
 With Differential Privacy enabled, the output is as follows.
 \begin{minted}{html}
@@ -561,8 +564,8 @@ With Differential Privacy enabled, the output is as follows.
 From this set of queries, we determine that the total age of the people in ZIP
 code 31643 is 10409, a 0.2\% error. If we attempt to use these queries to find
 the age of Abel Woods we will get $10409 - 10445 = 49$, a 48\% error. We can see
-that with Differential Privacy enabled, Abel Woods' privacy is protected, but summary
-queries on the database still return useful information.
+that with Differential Privacy enabled, Abel Woods' privacy is protected, but
+summary queries on the database still return useful information.
 
 \subsection{Query Set~\ref{qs:richest-person}}
 With Differential Privacy disabled, our database implementation output for the
@@ -623,10 +626,10 @@ maximums are very sensitive; they reflect only the most extreme data points. As
 a result, a large amount of randomness must be added to protect them.  In this
 instance, the $\Delta f$ value is over \$1.3 million resulting in a 25\% error.
 
-Queries on income and age return fairly accurate results, but this is only due 
-to the fact that the lower net worth caused us to match two different individuals, 
-both of whom were wealthy and in their sixties. However, the richest person's 
-privacy is still safe.
+Queries on income and age return fairly accurate results, but this is only due
+to the fact that the lower net worth caused us to match two different
+individuals, both of whom were wealthy and in their sixties. However, the
+richest person's privacy is still safe.
 
 \subsection{Query Set~\ref{qs:peter}}
 With Differential Privacy disabled, our database implementation for the third
@@ -694,13 +697,13 @@ include:
         example, it does not support \texttt{join} statements.  Future
         iterations of this project could implement more of the SQL standard.
     \item Our implementation can only process numerical data and is limited to
-        the Laplace Mechanism. Adding alternative Differential Privacy mechanisms,
-        such as the Exponential Mechanism, would greatly improve the practicality
-        of our Differential Privacy implementation.
+        the Laplace Mechanism. Adding alternative Differential Privacy
+        mechanisms, such as the Exponential Mechanism, would greatly improve the
+        practicality of our Differential Privacy implementation.
     \item Our implementation is not heavily optimized. Currently, some queries
         have $\mathcal{O}(n^2)$ algorithmic complexity. In further iterations of
-        our implementation, we could improve the performance of our system by using
-        caching methods and by optimizing our algorithms.
+        our implementation, we could improve the performance of our system by
+        using caching methods and by optimizing our algorithms.
     \item Our code base is not particularly extensible. Future implementations
         could improve the software design to make it adhere to good software
         engineering principles.
@@ -741,13 +744,13 @@ research, we found implementing of Differential Privacy would not require
 significant query parsing or edge-case handling. We were surprised by the
 mathematical rigor of Differential Privacy.
 
-Even with our implementation of a simple Differential Privacy solution, we were 
-able to demonstrate its effectiveness at protecting users' privacy. Despite its 
-usefulness, Differential Privacy has not seen significant adoption in industry 
-outside of large companies. Thus, we take this opportunity to call on industry to 
-create Differential Privacy libraries that are suitable for use in general industry 
-applications. We believe that if such libraries are created, the privacy of user
-data throughout the industry will be vastly increased.
+Even with our implementation of a simple Differential Privacy solution, we were
+able to demonstrate its effectiveness at protecting users' privacy. Despite its
+usefulness, Differential Privacy has not seen significant adoption in industry
+outside of large companies. Thus, we take this opportunity to call on industry
+to create Differential Privacy libraries that are suitable for use in general
+industry applications. We believe that if such libraries are created, the
+privacy of user data throughout the industry will be vastly increased.
 
 % (8) references
 {\printbibliography}
